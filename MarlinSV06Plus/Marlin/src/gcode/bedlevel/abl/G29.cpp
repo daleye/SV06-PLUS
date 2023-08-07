@@ -222,7 +222,9 @@ public:
  *     There's no extra effect if you have a fixed Z probe.
  */
 G29_TYPE GcodeSuite::G29() {
+  waitway = 3; // 08/07/23 - EGD -- Set the waitway as if the LCD commanded this action
   DEBUG_SECTION(log_G29, "G29", DEBUGGING(LEVELING));
+  
 
   TERN_(PROBE_MANUALLY, static) G29_State abl;
 

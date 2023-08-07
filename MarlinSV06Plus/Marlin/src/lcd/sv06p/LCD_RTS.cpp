@@ -1452,7 +1452,7 @@ void RTSSHOW::RTS_HandleData()
       else if (recdat.data[0] == 5)
       {
         #if ENABLED(FIX_MOUNTED_PROBE)
-          waitway = 3;
+          // waitway = 3; 08/07/23 - EGD -- Set the waitway within G29 to provide functional parity between LCD and Terminal commands
           RTS_SndData(1, AUTO_BED_LEVEL_ICON_VP);
           queue.enqueue_now_P(PSTR("G29"));
         #endif

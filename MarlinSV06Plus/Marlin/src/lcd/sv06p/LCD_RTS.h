@@ -393,7 +393,7 @@ extern int StartPrintFlag;
 extern bool Mode_flag;
 extern bool pause_flag;
 extern int PrintFlag;
-
+extern char waitway; // 08/07/23 - EGD -- Provide waitway access to G29 processor
 
 void RTS_AutoBedLevelPage();
 void RTS_MoveAxisHoming();
