@@ -56,32 +56,17 @@ void GcodeSuite::M73() {
         ? parser.value_float() * (PROGRESS_SCALE)
         : parser.value_byte());
       #if ENABLED(RTS_AVAILABLE)
-
-        percentComplete = parser.value_float() * (PROGRESS_SCALE);
-        if(percentComplete < 0)
-          percentComplete = 0;
-        if(percentComplete <= 100)
-        {
-          rtscheck.RTS_SndData((unsigned char)percentComplete, PRINT_PROCESS_ICON_VP);
-        }
-        else
-        {
-          rtscheck.RTS_SndData(0, PRINT_PROCESS_ICON_VP);
-          rtscheck.RTS_SndData(0, PRINT_SURPLUS_TIME_HOUR_VP);
-          rtscheck.RTS_SndData(0, PRINT_SURPLUS_TIME_MIN_VP);
-        }
+        percentComplete = parser.value_byte();
+        rtscheck.RTS_SndData((unsigned char)percentComplete, PRINT_PROCESS_ICON_VP);
         rtscheck.RTS_SndData((unsigned char)percentComplete, PRINT_PROCESS_VP);
       #endif
 
-
     #if ENABLED(USE_M73_REMAINING_TIME)
-      if (parser.seenval('R')) ui.set_remaining_time(60 * parser.value_ulong());
+      if (parser.seenval('R')) ui.set_remaining_time(parser.value_ulong());
       #if ENABLED(RTS_AVAILABLE)
         timeRemaining = parser.value_ulong();
-        if(timeRemaining < 0)
-          timeRemaining = 0;
-        rtscheck.RTS_SndData(timeRemaining / 3600, PRINT_SURPLUS_TIME_HOUR_VP);
-        rtscheck.RTS_SndData((timeRemaining % 3600) / 60, PRINT_SURPLUS_TIME_MIN_VP);
+        rtscheck.RTS_SndData((timeRemaining / 60), PRINT_SURPLUS_TIME_HOUR_VP);
+        rtscheck.RTS_SndData((timeRemaining % 60), PRINT_SURPLUS_TIME_MIN_VP);
       #endif
     #endif
 
