@@ -30,7 +30,12 @@
 
 #if ENABLED(DWIN_CREALITY_LCD_ENHANCED)
   #include "../../lcd/e3v2/enhanced/dwin.h"
+#elif ENABLED(RTS_AVAILABLE)
+  unsigned char Percentrecord = 0;
+  uint16_t remain_time = 0;
+  #include "../../lcd/sv06p/LCD_RTS.h"
 #endif
+
 
 /**
  * M73: Set percentage complete (for display on LCD)
@@ -49,11 +54,35 @@ void GcodeSuite::M73() {
     if (parser.seenval('P'))
       ui.set_progress((PROGRESS_SCALE) > 1
         ? parser.value_float() * (PROGRESS_SCALE)
-        : parser.value_byte()
-      );
+        : parser.value_byte());
+      #if ENABLED(RTS_AVAILABLE)
+
+        Percentrecord = parser.value_float() * (PROGRESS_SCALE);
+        if(Percentrecord < 0)
+          Percentrecord = 0;
+        if(Percentrecord <= 100)
+        {
+          rtscheck.RTS_SndData((unsigned char)Percentrecord, PRINT_PROCESS_ICON_VP);
+        }
+        else
+        {
+          rtscheck.RTS_SndData(0, PRINT_PROCESS_ICON_VP);
+          rtscheck.RTS_SndData(0, PRINT_SURPLUS_TIME_HOUR_VP);
+          rtscheck.RTS_SndData(0, PRINT_SURPLUS_TIME_MIN_VP);
+        }
+        rtscheck.RTS_SndData((unsigned char)Percentrecord, PRINT_PROCESS_VP);
+      #endif
+
 
     #if ENABLED(USE_M73_REMAINING_TIME)
       if (parser.seenval('R')) ui.set_remaining_time(60 * parser.value_ulong());
+      #if ENABLED(RTS_AVAILABLE)
+        remain_time = parser.value_ulong();
+        if(remain_time < 0)
+          remain_time = 0;
+        rtscheck.RTS_SndData(remain_time / 3600, PRINT_SURPLUS_TIME_HOUR_VP);
+        rtscheck.RTS_SndData((remain_time % 3600) / 60, PRINT_SURPLUS_TIME_MIN_VP);
+      #endif
     #endif
 
   #endif
