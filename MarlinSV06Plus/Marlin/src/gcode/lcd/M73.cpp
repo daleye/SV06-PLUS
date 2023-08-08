@@ -59,6 +59,16 @@ void GcodeSuite::M73() {
         percentComplete = parser.value_byte();
         rtscheck.RTS_SndData((unsigned char)percentComplete, PRINT_PROCESS_ICON_VP);
         rtscheck.RTS_SndData((unsigned char)percentComplete, PRINT_PROCESS_VP);
+        if (percentComplete == 100)
+        {
+          rtscheck.RTS_SndData(0, PRINT_TIME_HOUR_VP);
+          rtscheck.RTS_SndData(0, PRINT_TIME_MIN_VP);
+          rtscheck.RTS_SndData(0, PRINT_SURPLUS_TIME_HOUR_VP);
+          rtscheck.RTS_SndData(0, PRINT_SURPLUS_TIME_MIN_VP);
+          rtscheck.RTS_SDcard_Stop();
+          PrintFlag = 0;
+          Update_Time_Value = 0;
+        }
       #endif
 
     #if ENABLED(USE_M73_REMAINING_TIME)
